@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Título atualizado conforme a solicitação -->
+    <title>[EsGM] Central de Aulas</title>
+
+    <!-- Favicon adicionado aqui -->
+    <link rel="icon" type="image/png" href="https://i.imgur.com/j0Wl6DQ.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Feather Icons for a clean look -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        :root {
+            --background-start-rgb: 10, 10, 20;
+            --background-end-rgb: 20, 20, 40;
+            --blue-glow: rgba(59, 130, 246, 0.3);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url('https://i.imgur.com/08qCnMt.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            overflow-x: hidden;
+            color: #d1d5db; /* Gray-300 */
+        }
+
+        .glass-card {
+            background: rgba(17, 24, 39, 0.6); /* Gray-900 @ 60% */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        #content-box.glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.25);
+        }
+
+        #nav-bar.glass-card {
+            background: rgba(10, 10, 20, 0.7); /* Darker blueish tone */
+        }
+        
+        .nav-btn.active {
+            color: #ffffff;
+        }
+        
+        .nav-btn {
+            color: #9ca3af; /* Gray-400 */
+        }
+        
+        .nav-btn:not(.active):hover {
+            color: #e5e7eb;
+            transform: translateY(-4px);
+        }
+
+        .nav-control:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        .nav-control:not(:disabled):hover {
+            background-color: var(--blue-glow);
+            color: #93c5fd; /* blue-300 */
+        }
+
+        /* Animações sofisticadas */
+        @keyframes scaleUp {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes slideUpFade {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        /* Animação para o gradiente do título */
+        @keyframes gradient-move {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animate-scale-up {
+            animation: scaleUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .animate-slide-up-fade {
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+        .animate-fade-out {
+            animation: fadeOut 0.3s ease-in-out forwards;
+        }
+        
+        main, footer {
+            transition: opacity 0.5s ease;
+        }
+        /* Propriedades do título atualizadas para o gradiente animado */
+        .main-title {
+            background: linear-gradient(45deg, #3b82f6, #60a5fa, #9ca3af);
+            background-size: 400% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-move 3s ease-in-out infinite;
+        }
+        
+        #nav-indicator {
+            position: absolute;
+            bottom: -2px;
+            height: 2px;
+            background-color: #3b82f6; /* blue-500 */
+            box-shadow: 0 0 12px #3b82f6, 0 0 4px #93c5fd;
+            border-radius: 1px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            opacity: 0; /* Initially hidden */
+        }
+        
+        #nickname-input:focus {
+            border-color: #3b82f6; /* blue-500 */
+            box-shadow: 0 0 0 3px var(--blue-glow);
+        }
+        
+        #save-nickname-btn {
+            background: linear-gradient(45deg, #2563eb, #3b82f6); /* blue-600 to blue-500 */
+        }
+        
+        /* Custom scrollbar */
+        #box-content ::-webkit-scrollbar {
+            width: 6px;
+        }
+        #box-content ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #box-content ::-webkit-scrollbar-thumb {
+            background-color: rgba(59, 130, 246, 0.5); /* blue-500 @ 50% */
+            border-radius: 10px;
+        }
+        #box-content ::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(59, 130, 246, 0.8); /* blue-500 @ 80% */
+        }
+        
+        .spoiler-toggle .arrow {
+            transition: transform 0.3s ease-in-out;
+        }
+        .spoiler-toggle.collapsed .arrow {
+            transform: rotate(0deg);
+        }
+        .spoiler-toggle:not(.collapsed) .arrow {
+            transform: rotate(180deg);
+        }
+
+        .final-page-button {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease-in-out;
+            border: 1px solid transparent;
+            color: white;
+        }
+        .final-page-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .btn-system {
+            background: linear-gradient(45deg, #2563eb, #3b82f6);
+            box-shadow: 0 4px 15px 0 rgba(59, 130, 246, 0.4);
+        }
+        .btn-form {
+            background: linear-gradient(45deg, #4b5563, #6b7280);
+            box-shadow: 0 4px 15px 0 rgba(107, 114, 128, 0.4);
+        }
+        .btn-report {
+            background: linear-gradient(45deg, #374151, #4b5563);
+            box-shadow: 0 4px 15px 0 rgba(75, 85, 99, 0.4);
+        }
+        
+        .justified-text {
+            text-align: justify;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    
+    <!-- Nickname Modal -->
+    <div id="nickname-modal" class="hidden fixed inset-0 bg-gray-900/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="glass-card w-full max-w-sm rounded-2xl p-8 shadow-xl text-center">
+            <h2 class="text-2xl font-bold mb-4 text-gray-100">Bem-vindo!</h2>
+            <p class="text-gray-400 mb-6">Por favor, insira seu nickname para personalizar os scripts.</p>
+            <input id="nickname-input" type="text" placeholder="Digite seu nickname aqui..." class="w-full bg-gray-800/50 text-white placeholder-gray-400 rounded-lg px-4 py-3 border border-gray-700 focus:outline-none transition">
+            <button id="save-nickname-btn" class="w-full text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-blue-500/30 transform hover:scale-105 transition-all duration-300 ease-in-out mt-6">
+                Salvar e Continuar
+            </button>
+        </div>
+    </div>
+    
+    <!-- Main App Wrapper -->
+    <div id="app-wrapper" class="w-full min-h-screen flex flex-col items-center p-4 justify-center gap-6 transition-all duration-700 ease-in-out">
+        <header class="w-full max-w-lg">
+            <nav id="nav-bar" class="glass-card rounded-xl p-1.5 shadow-md">
+                <div id="nav-options" class="relative flex flex-wrap items-center justify-center gap-x-1 sm:gap-x-2">
+                    <div id="nav-indicator"></div>
+                    <button data-option="CFi" class="nav-btn relative z-10 font-medium py-1.5 px-3 text-sm rounded-lg transition-all duration-300 ease-in-out">CFI</button>
+                </div>
+            </nav>
+        </header>
+
+        <main id="main-container" class="w-full max-w-lg flex-grow flex items-center justify-center opacity-0">
+            <div id="content-box" class="glass-card w-full h-full min-h-[50vh] rounded-2xl p-4 sm:p-5 shadow-xl flex-col hidden relative">
+                <div id="box-content" class="flex-grow overflow-hidden"></div>
+                <button id="close-btn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-200 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+
+            <div id="initial-message" class="text-center text-gray-400">
+                <!-- Adicionado o efeito de entrada aqui -->
+                <h2 class="text-6xl font-bold main-title animate-slide-up-fade">Central de Aulas</h2>
+                <p class="mt-2 max-w-md text-gray-400">Selecione uma das opções acima.</p>
+            </div>
+        </main>
+        
+        <footer class="text-center text-gray-500 text-sm opacity-0 ">
+            <p>Desenvolvida por <color class="main-title animate-slide-up-fade">.Brendon</color></p>
+        </footer>
+    </div>
+
+    <script>
+        const appWrapper = document.getElementById('app-wrapper');
+        const navBar = document.getElementById('nav-bar');
+        const navContainer = document.getElementById('nav-options');
+        const contentBox = document.getElementById('content-box');
+        const boxContent = document.getElementById('box-content');
+        const closeBtn = document.getElementById('close-btn');
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const initialMessage = document.getElementById('initial-message');
+        const nicknameModal = document.getElementById('nickname-modal');
+        const nicknameInput = document.getElementById('nickname-input');
+        const saveNicknameBtn = document.getElementById('save-nickname-btn');
+        
+        let navIndicator = document.getElementById('nav-indicator');
+        let currentOption = null;
+        let currentStep = 0;
+        let userNickname = '';
+        let isInitialLayout = true;
+
+           const contentData = {
+            'CFi': {
+                title: 'CURSO DE FORMAÇÃO INICIAL',
+                steps: [
+                    {
+                        content: [
+                            { type: 'orientation', text: '<center><strong>ORIENTAÇÕES</strong></center>\n<strong>Campos cinzas:</strong> orientações direcionadas exclusivamente aos instrutores (não devem ser repassadas aos alunos).\n\n<strong>Títulos em azul:</strong> tópicos da instrução.\n\n<strong>Campos verdes:</strong> respostas das questões.\n\nCopie o(s) nickname(s) do(s) policial(is) presente(s) pelo sussurro, bem como o horário de início e fim da aula.\n\nAo instrutor(a) responsável que omitir ou pular o script da aula, será punido(a) conforme o Código Penal Militar.' }
+                        ],
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'INTRODUÇÃO' },
+                            { type: 'line', text: 'Olá, recruta! Seja bem-vindo às Forças Expedicionária Brasileira e à sua primeira aula.' },
+                            { type: 'line', text: 'Neste momento, eu, instrutor(a) [USERNAME], irei ensinar' },
+                            { type: 'line', text: 'os conceitos básicos da nossa polícia.' },
+                            { type: 'line', text: 'Caso necessário, anote todas informações repassadas,' },
+                            { type: 'line', text: 'visto que haverá dois exames: um prático e um teórico.' },
+                            { type: 'line', text: 'Em casos de desconexão, aguarde-me cerca de 3 minutos.' },
+                            { type: 'line', text: 'Caso contrário, retorne ao batalhão pelo navegador.' },
+                            { type: 'line', text: 'Permaneça em silêncio durante a instrução; em caso de dúvidas, apenas acene.' },
+                            { type: 'line', text: 'Alguma dúvida?' },
+                            { type: 'orientation', text: 'Caso o recruta tenha dúvidas, esclareça-as; caso contrário, prossiga.' }
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'NEGRITO' },
+                            { type: 'line', text: 'A utilização do negrito é de extrema importância dentro dos quartos oficiais da FEB.' },
+                            { type: 'line', text: 'Você sabe falar em negrito?' },
+                            { type: 'orientation', text: 'Caso saiba, pule para a última linha.' },
+                            { type: 'spoiler', 
+                              title: 'CASO NÃO SAIBA',
+                              content: [
+                                  { type: 'line', text: 'Você está jogando pelo celular ou computador?' },
+                                    { type: 'spoiler', 
+                                        title: 'COMPUTADOR',
+                                        content: [
+                                        { type: 'line', text: 'Para quem está jogando pelo launcher no PC, usar o negrito é muito simples: basta' },
+                                        { type: 'line', text: 'segurar a tecla “Shift” do teclado e pressionar “Enter” para enviar a mensagem em negrito.' },
+                                        { type: 'line', text: 'Vamos praticar:' },
+                                        { type: 'line', text: 'Digite “Sim, senhor” e, antes de enviar a mensagem, mantenha pressionada a tecla' },
+                                        { type: 'line', text: '“Shift” e, em seguida, pressione “Enter”.' },
+                                    ]
+                                },
+                                { type: 'spoiler', 
+                                        title: 'CELULAR',
+                                        content: [
+                                        { type: 'line', text: 'Para quem está jogando pelo celular, usar o negrito também é muito simples: digite' },
+                                        { type: 'line', text: '“:Shout + a palavra” e envie.' },
+                                        { type: 'line', text: 'Vamos praticar:' }
+                                    ]
+                                },
+                            ]
+                        },
+                        { type: 'line', text: 'Ótimo! Lembre-se de usar o negrito, visto que é de extrema importância.' }
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'COMANDOS' },
+                            { type: 'line', text: 'Ao todo, existem 08 comandos, sendo: Sentido, Continência, Apresentar armas,' },
+                            { type: 'line', text: 'Marcar passos, Silêncio, Apresente-se, Dispensado e À vontade.' },
+                            { type: 'line', text: 'Mas, nesta aula, só vamos te ensinar 6 deles.' },
+                            { type: 'line', text: 'Você conhece os comandos?' },
+                            { type: 'orientation', text: 'Aguarde a resposta do(s) recruta(s). Caso ele(s) saiba(m) os comandos, pule diretamente para o teste prático. Caso ele(s) não saiba(m), repasse a explicação dos comandos.' },
+                            { type: 'spoiler', 
+                                        title: 'CASO NÃO SAIBA',
+                                        content: [
+                                        { type: 'line', text: 'Irei ensinar cada um deles e, em seguida, praticá-los.' },
+                                        { type: 'line', text: 'Você terá 3 chances para executá-los, caso esgote-as será reprovado(a).' },
+                                        { type: 'orientation', text: 'Passe a explicação e, logo após, pratique o comando conforme o script. Caso o recruta tenha dificuldades, ajude-o!' },
+                                        { type: 'line', text: 'Sentido: consiste em levantar-se, ficar reto, manter-se imóvel'},
+                                        { type: 'line', text: 'e em silêncio até que outro comando seja aplicado.' },
+                                        { type: 'line', text: 'SENTIDO!' },
+                                        { type: 'line', text: 'Continência: consiste em acenar uma única vez. Para isso, envie “o/”.' },
+                                        { type: 'line', text: 'CONTINÊNCIA!' },
+                                        { type: 'line', text: 'Apresentar armas: consiste em acenar repetidamente (envie “o/” a cada 2 segundos)' },
+                                        { type: 'line', text: 'até que o comando Sentido seja aplicado novamente.' },
+                                        { type: 'line', text: 'APRESENTAR ARMAS!' },
+                                        { type: 'line', text: 'Marcar passos: consiste em dançar Hip-Hop e parar quando for dado o comando' },
+                                        { type: 'line', text: 'Sentido. Para dançar, basta clicar no seu Habbo, ir em “Dança” e escolher a' },
+                                        { type: 'line', text: 'opção “Hip-Hop”. Para usuários mobile, basta segurar o dedo sobre o' },
+                                        { type: 'line', text: 'personagem e abrir o menu.' },
+                                        { type: 'line', text: 'MARCAR-PASSOS!' },
+                                        { type: 'line', text: 'À vontade: consiste em liberar o retorno do policial às suas atividades anteriores.' },
+                                        { type: 'line', text: 'Ex.: Sente-se ou volte ao que estava fazendo.' },
+                                        { type: 'line', text: 'À VONTADE!' },
+                                    ]
+                                },
+                            { type: 'orientation', text: 'Caso  já saiba(m) os comandos, utilize o spoiler abaixo.' },
+                                        { type: 'spoiler', 
+                                        title: 'CASO SAIBA',
+                                        content: [
+                                        { type: 'line', text: 'Você terá 3 chances para executá-los, caso esgote-as será reprovado(a). Vamos começar?' },
+                                        { type: 'line', text: 'SENTIDO!' },
+                                        { type: 'line', text: 'CONTINÊNCIA!' },
+                                        { type: 'line', text: 'APRESENTAR-ARMAS!' },
+                                        { type: 'line', text: 'SENTIDO!' },
+                                        { type: 'line', text: 'MARCAR-PASSOS!'},
+                                        { type: 'line', text: 'SENTIDO!' },
+                                        { type: 'line', text: 'SILÊNCIO!' },
+                                        { type: 'line', text: 'À VONTADE!' },
+                                    ]
+                                },
+                            { type: 'line', text: 'Excelente! Os comandos Apresente-se e Dispensado serão ensinados no Curso de Formação de Soldados.' },
+                                        { type: 'spoiler', 
+                                        title: 'EM CASO DE REPROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Infelizmente, você esgotou suas chances e está reprovado(a).' },
+                                        { type: 'line', text: 'Tenho certeza de que na próxima tentativa você conseguirá. Não desista!' },
+                                        { type: 'line', text: 'Pode retornar para o batalhão para refazer seu alistamento.' },
+                                    ]
+                                },
+                            { type: 'orientation', text: 'Prossiga a aula normalmente com os recrutas que permanecerem. Caso não haja nenhum, finalize e registre a aula somente na planilha de aulas.' },
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'HISTÓRIA' },
+                            { type: 'line', text: 'A Força Expedicionária Brasileira (FEB) foi criada em 15 de agosto de 2025 por' },
+                            { type: 'line', text: 'Setfaan e Pykes.Ban, que atualmente ocupam o posto de Chefes-de-Estado da instituição.' },
+                            { type: 'line', text: 'A nossa missão é resgatar valores perdidos, sentimentos de nostalgia,' },
+                            { type: 'line', text: 'inovar e fortalecer policiais, promovendo ' },
+                            { type: 'line', text: 'qualidade e realismo no ramo militar.' },
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'HIERARQUIA' },
+                            { type: 'line', text: 'Inicialmente, começará na primeira patente/cargo da hierarquia militar,' },
+                            { type: 'line', text: 'sendo Soldado/Policial.' },
+                            { type: 'line', text: 'No entanto, existem outras patentes, como Cabo, Sargento, Suboficial,' },
+                            { type: 'line', text: 'assim como suas equivalências ao Corpo Empresarial.' },
+                            { type: 'line', text: 'Você será promovido sempre que cumprir os requisitos, como:' },
+                            { type: 'line', text: 'o tempo mínimo em cada patente e os cursos obrigatórios.' }
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'PRONOMES DE TRATAMENTO' },
+                            { type: 'line', text: 'A forma de tratamento com superiores hierárquicos, é obrigatório o uso de pronomes de' },
+                            { type: 'line', text: 'tratamento por todos os militares. Sempre que se dirigir a um superior,' },
+                            { type: 'line', text: 'utilize senhor(a) + patente/cargo ou nickname.' },
+                            { type: 'line', text: 'Ex.: “Sim, senhor sargento.” ou “Posso me ausentar, senhora Maria?”' },
+                            { type: 'line', text: 'Já no caso de militares de patente igual ou inferior, deve-se utilizar apenas patente/cargo + nickname.' },
+                            { type: 'line', text: 'Ex.: “Sim, soldado João.” ou “Soldado Bruno, venha até aqui!”' },
+                            { type: 'line', text: 'Alguma dúvida?' },
+                            { type: 'orientation', text: 'Aguarde a resposta do(s) aluno(s). Caso ele(s) tenha(m) dúvidas, retire-as.' },
+                            { type: 'orientation', text: 'A partir de agora, comece a cobrar o uso dos pronomes pelos recrutas. Caso não sejam utilizados, oriente a usá-los corretamente.' }
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'RECEPÇÃO' },
+                            { type: 'line', text: 'A recepção é a porta de entrada da polícia. Ou seja, todos os civis que desejarem se' },
+                            { type: 'line', text: 'alistar passarão primeiro por você, sendo o primeiro contato deles.' },
+                            { type: 'line', text: 'Por isso, é fundamental seguir algumas regras:' },
+                            { type: 'line', text: 'Seja educado e cordial;' },
+                            { type: 'line', text: 'Realize o processo de alistamento da melhor forma possível;' },
+                            { type: 'line', text: 'Retire todas as dúvidas do civil;' },
+                            { type: 'line', text: 'Caso não saiba responder a alguma pergunta, acene que um superior irá orientá-lo.' }
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'COMO ASSUMIR A RECEPÇÃO' },
+                            { type: 'line', text: 'Ao chegar na recepção e não houver cadeiras vazias, deve-se assumir um' },
+                            { type: 'line', text: 'superior da seguinte forma: mantenha-se a um quadrado de distância' },
+                            { type: 'line', text: 'do superior e digite:' },
+                            { type: 'line', text: '“Assumo, senhor/senhora + patente/cargo ou nickname.”' },
+                            { type: 'line', text: 'Ex.: “Assumo, senhor sargento.” ou “Assumo, senhora Maria.”' },
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'REQUISITOS PARA O ALISTAMENTO' },
+                            { type: 'line', text: 'Para efetuar o alistamento, é obrigatório verificar os seguintes requisitos:' },
+                            { type: 'line', text: 'Fardamento:' },
+                            { type: 'line', text: 'Camisa preta com bolsos para personagens masculinos e top preto sem mangas para' },
+                            { type: 'line', text: 'personagens femininos; calça preta com bolsos e sapatos pretos de bico arredondado' },
+                            { type: 'line', text: 'para ambos os gêneros de personagens.' },
+                            { type: 'line', text: 'Além do fardamento, é proibida a entrada de civis/recrutas com acessórios, sejam' },
+                            { type: 'line', text: 'eles brincos, óculos, efeitos e até mesmo barbas. O uso de cabelos muito grandes' },
+                            { type: 'line', text: 'também é proibido, assim como tonalidades de pele que não condizem com a' },
+                            { type: 'line', text: 'realidade, pois cores fora do padrão real não serão permitidas.' },
+                            { type: 'line', text: 'Missão:' },
+                            { type: 'line', text: 'A missão do civil/recruta, que deve estar totalmente em branco, sem qualquer texto.' },
+                            { type: 'line', text: 'Grupos:' },
+                            { type: 'line', text: 'Ele deve ter o grupo oficial da Polícia FEB favoritado, sendo proibida a entrada caso' },
+                            { type: 'line', text: 'estejam em grupos de outras organizações militares ou que sejam contrárias às regras' },
+                            { type: 'line', text: 'estipuladas na Habbo Etiqueta.' },
+                            { type: 'line', text: 'Alguma dúvida?' },
+                            { type: 'orientation', text: 'Aguarde a resposta do(s) aluno(s). Caso ele(s) tenha(m) dúvidas, retire-as.' },
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'EXAME TEÓRICO' },
+                            { type: 'line', text: 'Agora, serão feitas 05 perguntas referentes ao conteúdo que foi ensinado.' },
+                            { type: 'line', text: 'Você deve acertar ao menos 02 questões para ser aprovado. Desde já, boa sorte!' },
+                            { type: 'orientation', text: 'Caso o recruta cometa o terceiro erro, reprove-o imediatamente!' },
+                            { type: 'orientation', text: 'Caso o recruta erre 02 questões, faça a correção ao final do exame, explicando a forma correta.' },
+                            { type: 'orientation', text: 'Lembrando: não forneça as respostas aos recrutas, principalmente aos reprovados.' },
+                            { type: 'orientation', text: 'As respostas dos recrutas não precisam estar igual ao script. É importante que você avalie se o recruta soube entender o que é proposto na aula.' },
+                            { type: 'spoiler', 
+                                        title: 'CASO HAJA MAIS DE UM RECRUTA',
+                                        content: [
+                                        { type: 'line', text: 'Vocês conseguem sussurrar comigo?' },
+                                        { type: 'orientation', text: 'Se os recrutas não souberem, oriente-os.' },
+                                        { type: 'orientation', text: 'Após todos sussurrarem com você, continue com a aula.' },
+                                        { type: 'line', text: 'Excelente! Caso envie a resposta fora do sussurro, será contabilizada como 1 erro.' },
+                                    ]
+                                },
+                        ]
+                    },
+                     { 
+                        content: [
+                            { type: 'line', text: 'Vamos começar!' },
+                            { type: 'line', text: 'Questão 01 - Qual a forma de tratamento com superiores?' },
+                            { type: 'orientation', text: 'R.: Senhor/Senhora.' },
+                            { type: 'line', text: 'Questão 02 - Como devem assumir um superior na recepção?' },
+                            { type: 'orientation', text: 'R.: um quadrado de distância e digitar: Assumo, senhor/senhora + nome ou patente.' },
+                            { type: 'line', text: 'Questão 03 - Quais são os três requisitos de alistamento?' },
+                            { type: 'orientation', text: 'R.: Fardamento, Missão e Grupo.' },
+                            { type: 'line', text: 'Questão 04 - Como deve estar a missão do civil/recruta?' },
+                            { type: 'orientation', text: 'R.: Missão vazia/limpa, sem texto escrito.' },
+                            { type: 'line', text: 'Questão 05 - Quais são os dois chefes de estado da FEB?' },
+                            { type: 'orientation', text: 'R.: Setfaan e Pykes.Ban' },
+                        ]
+                    },
+                    { 
+                        content: [
+                            { type: 'title', text: 'CONCLUSÃO' },
+                            { type: 'spoiler', 
+                                        title: 'EM CASO DE APROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Parabéns, você foi aprovado no Curso de Formação Inicial!' },
+                                        { type: 'line', text: 'Coloque uma boina preta e escreva em sua missão: [FEB] Soldado [CDE]' },
+                                        { type: 'orientation', text: 'Aguarde o aluno realizar os procedimentos! Lembre-se de substituir “SUA TAG” pela sua própria TAG.' },
+                                        { type: 'line', text: 'Excelente, seja bem-vindo oficialmente à Força Expedicionária Brasileira, e' },
+                                        { type: 'line', text: 'agradecemos por escolher fazer parte dessa grande família.' },
+                                        { type: 'line', text: 'Lembre-se: para encontrar nosso batalhão, basta pesquisar' },
+                                        { type: 'line', text: 'por “FEB” no navegador de quartos.' },
+                                        { type: 'line', text: 'Caso permaneça mais de 5 dias offline do jogo, você será demitido. Portanto, é' },
+                                        { type: 'line', text: 'fundamental manter constância de presença.' },
+                                        { type: 'line', text: 'Aguarde enquanto posto a aula.' },
+                                        { type: 'orientation', text: 'Poste a aula na planilha de aulas e no System dos alunos aprovados! Lembre-se de copiar os nicknames pelo sussurro e registrar o horário de início e término da instrução. Em casos de erro de postagem no System, procure um membro do SRA. Já em casos de erro de postagem na planilha, faça uma retificação em até 24 horas. O não cumprimento acarretará em punições internas.' }
+                                    ]
+                                },
+                                        { type: 'spoiler', 
+                                        title: 'EM CASO DE REPROVADOS',
+                                        content: [
+                                        { type: 'line', text: 'Lamento, mas infelizmente você errou mais de duas questões e está reprovado(a). ' },
+                                        { type: 'line', text: 'Tenho certeza de que na próxima tentativa você conseguirá. Não desista!' },
+                                        { type: 'line', text: 'Pode retornar para o batalhão para refazer seu alistamento.' },
+                                    ]
+                                },
+                            ]
+                    },
+                    {
+                        content: [
+                            { type: 'final-page' }
+                        ]
+                    }
+                ]
+            },
+            'CFSd': { title: 'Script da Aula CFSd', steps: [ { content: [{ type: 'line', text: 'Primeiro passo para CFSd.'}] }, { content: [{ type: 'line', text: 'Segundo passo para CFSd.'}] }, { content: [{ type: 'line', text: 'Terceiro passo para CFSd.'}] } ] },
+            'CFCb': { title: 'Script da Aula CFCb', steps: [ { content: [{ type: 'line', text: 'Este é o único passo para CFCb.'}] } ] },
+            'CFSgt': { title: 'Script da Aula CFSgt', steps: [ { content: [{ type: 'line', text: 'Instruções para Sargentos: Passo 1.'}] }, { content: [{ type: 'line', text: 'Instruções para Sargentos: Passo 2.'}] } ] },
+            'CFSbt': {
+                title: 'Script da Aula CFSbt',
+                steps: [ { content: [{ type: 'line', text: 'Bem-vindo ao treinamento de Subtenentes.'}] }, { content: [{ type: 'line', text: 'Sua principal responsabilidade é auxiliar os oficiais.'}] }, { content: [{ type: 'line', text: 'A comunicação clara é a chave para o sucesso.'}] }, { content: [{ type: 'line', text: 'Este é o último passo do treinamento.'}] } ]
+            }
+        };
+
+        function getCopyableLines(items, lines = []) {
+            if (!items) return lines;
+            items.forEach(item => {
+                if (item.type === 'line' || item.type === 'title') {
+                    lines.push(item.text);
+                } else if (item.type === 'spoiler') {
+                    getCopyableLines(item.content, lines);
+                }
+            });
+            return lines;
+        }
+
+        function initializeCopiedStatus() {
+            for (const key in contentData) {
+                contentData[key].copiedStatus = contentData[key].steps.map(step => {
+                    const lines = getCopyableLines(step.content);
+                    return lines.map(lineText => ({ text: lineText, status: 0 }));
+                });
+            }
+        }
+        
+        initializeCopiedStatus();
+
+        function replaceUsername(text) {
+            return text.replace(/\[USERNAME\]/g, userNickname || 'Instrutor');
+        }
+
+        function renderContentRecursive(items, lineCounter) {
+            let html = '';
+            if (!items) return html;
+
+            items.forEach((item) => {
+                const processedText = item.text ? replaceUsername(item.text) : '';
+                
+                switch(item.type) {
+                    case 'title':
+                        html += `
+                            <div class="copyable-line w-full p-1.5 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-gray-800/50 transition-colors group">
+                                <button title="Copiar texto" class="copy-btn flex-shrink-0 p-1.5 rounded-full text-gray-500 hover:text-blue-400 hover:bg-blue-900/50 transition-colors" data-copy-text="${processedText.replace(/"/g, '&quot;')}" data-line-index="${lineCounter.count}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                </button>
+                                <h3 class="text-sm font-semibold text-blue-400 text-center uppercase tracking-wider flex-grow">${processedText}</h3>
+                            </div>
+                        `;
+                        lineCounter.count++;
+                        break;
+                    case 'line':
+                        html += `
+                            <div class="copyable-line w-full p-1.5 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-gray-800/50 transition-colors group">
+                                <button title="Copiar texto" class="copy-btn flex-shrink-0 p-1.5 rounded-full text-gray-500 hover:text-blue-400 hover:bg-blue-900/50 transition-colors" data-copy-text="${processedText.replace(/"/g, '&quot;')}" data-line-index="${lineCounter.count}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                </button>
+                                <p class="text-sm flex-grow transition-colors duration-300 text-gray-400 justified-text">${processedText}</p>
+                            </div>
+                        `;
+                        lineCounter.count++;
+                        break;
+                    case 'orientation':
+                        if (processedText.startsWith('R.:')) {
+                            html += `<div class="text-xs text-green-300 px-3 py-2 rounded-r-lg bg-green-900/40 border-l-2 border-green-700/80 my-2">${processedText}</div>`;
+                        } else {
+                            html += `<div class="text-xs text-gray-400 px-3 py-2 rounded-r-lg bg-gray-800/40 border-l-2 border-gray-600 my-3 whitespace-pre-wrap justified-text">${processedText}</div>`;
+                        }
+                        break;
+                    case 'spoiler':
+                        const uniqueSpoilerId = `spoiler-content-${currentStep}-${Math.random().toString(36).substr(2, 9)}`;
+                        const spoilerContentHtml = renderContentRecursive(item.content, lineCounter);
+
+                        html += `
+                            <div class="my-4">
+                                <button class="spoiler-toggle collapsed w-full flex items-center justify-between p-3 rounded-lg text-gray-100 bg-gray-700/50 hover:bg-gray-700/70 transition-colors" data-spoiler-target-id="${uniqueSpoilerId}">
+                                    <span>${item.title}</span>
+                                    <svg class="arrow w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                </button>
+                                <div id="${uniqueSpoilerId}" class="spoiler-content hidden p-3 bg-gray-800/50 rounded-lg mt-2 space-y-2">
+                                    ${spoilerContentHtml}
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'final-page':
+                        html += `
+                            <div class="flex flex-col items-center justify-center h-full w-full space-y-4">
+                                <h3 class="text-lg font-bold text-gray-100 mb-6">Aula Finalizada!</h3>
+                                <a href="https://feb.syshabbo.com/aula" target="_blank" class="flex items-center justify-center max-w-xs w-full final-page-button btn-system">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                                    Postar no FEBSystem
+                                </a>
+                                <a href="https://forms.gle/gUC2jVMAg3KXZRAP9" target="_blank" class="flex items-center justify-center max-w-xs w-full final-page-button btn-form">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                                    Postar no formulário
+                                </a>
+                                <a href="https://docs.google.com/spreadsheets/d/1ICn6nroTluC2w8u7C0ygHkMI21_A3GvFY2IMS2D5-T4/edit?usp=sharing" target="_blank" class="flex items-center justify-center max-w-xs w-full final-page-button btn-report">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12" y2="12"></line><line x1="7" y1="18" x2="7" y2="15"></line><line x1="17" y1="18" x2="17" y2="9"></line></svg>
+                                    Conferir relatório
+                                </a>
+                            </div>
+                        `;
+                        break;
+                }
+            });
+            return html;
+        }
+
+        function renderStep() {
+            const data = contentData[currentOption];
+            if (!data) return;
+
+            const stepData = data.steps[currentStep];
+            const totalSteps = data.steps.length;
+            const lineCounter = { count: 0 };
+            const contentHtml = renderContentRecursive(stepData.content, lineCounter);
+            
+            const isFinalPage = stepData.content.some(item => item.type === 'final-page');
+
+            boxContent.innerHTML = `
+                <div class="flex flex-col h-full animate-fade-in">
+                    <h2 class="text-lg font-bold tracking-tight text-center mb-2 text-gray-100">${data.title}</h2>
+                    <div class="flex-grow overflow-y-auto pr-2 space-y-2 pb-3">
+                        ${contentHtml}
+                    </div>
+                    ${isFinalPage ? '' : `
+                    <div class="mt-auto pt-3 flex items-center justify-between border-t border-white/10">
+                        <!-- Icone de voltar atualizado para ser mais claro. -->
+                        <button class="nav-control p-2 rounded-lg transition-colors text-gray-400" id="prev-btn" title="Anterior" ${currentStep === 0 ? 'disabled' : ''}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        </button>
+                        
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-500 font-medium text-sm">Página</span>
+                            <input type="number" id="step-input" class="w-12 text-center text-sm font-medium bg-gray-700/50 rounded-md border border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500" value="${currentStep + 1}" min="1" max="${totalSteps}">
+                            <span class="text-gray-500 font-medium text-sm">de ${totalSteps}</span>
+                            <button id="go-btn" class="nav-control p-2 rounded-lg transition-colors text-gray-400" title="Ir para a página">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            </button>
+                        </div>
+                        
+                        <button class="nav-control p-2 rounded-lg transition-colors text-gray-400" id="next-btn" title="Próximo" ${currentStep === totalSteps - 1 ? 'disabled' : ''}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                    `}
+                </div>
+            `;
+            
+            updateCopyStatusStyles();
+        }
+
+        function updateCopyStatusStyles() {
+            const data = contentData[currentOption];
+            if (!data) return;
+            
+            const stepStatus = data.copiedStatus[currentStep];
+            if (!stepStatus) return;
+
+            const copyableLineElements = boxContent.querySelectorAll('.copyable-line');
+            
+            copyableLineElements.forEach((lineElement) => {
+                const copyBtn = lineElement.querySelector('.copy-btn');
+                if (!copyBtn) return;
+                
+                const index = parseInt(copyBtn.dataset.lineIndex, 10);
+                if (isNaN(index) || index >= stepStatus.length) return; 
+
+                const p = lineElement.querySelector('p, h3, h4');
+                if (!p) return;
+
+                const status = stepStatus[index].status;
+                p.classList.remove('text-gray-400', 'text-green-400', 'text-red-400', 'text-blue-400');
+                
+                if (status === 1) { // Copied
+                    p.classList.add('text-green-400');
+                } else if (status === 2) { // Skipped
+                    p.classList.add('text-red-400');
+                } else { // Default
+                    if (p.tagName === 'P') p.classList.add('text-gray-400');
+                    else p.classList.add('text-blue-400');
+                }
+            });
+        }
+        
+        function handleNavigation(direction) {
+            const contentContainer = boxContent.querySelector('.flex.flex-col');
+            if (contentContainer) {
+                contentContainer.classList.remove('animate-fade-in');
+                contentContainer.classList.add('animate-fade-out');
+                setTimeout(() => {
+                    currentStep += direction;
+                    renderStep();
+                }, 300);
+            }
+        }
+        
+        function updateNavIndicator(targetButton) {
+            if (targetButton) {
+                navIndicator.style.width = `${targetButton.offsetWidth}px`;
+                navIndicator.style.left = `${targetButton.offsetLeft}px`;
+                navIndicator.style.opacity = '1';
+            } else {
+                navIndicator.style.opacity = '0';
+            }
+        }
+
+        navContainer.addEventListener('click', (event) => {
+            const button = event.target.closest('.nav-btn');
+            if (button) {
+                if(isInitialLayout) {
+                    isInitialLayout = false;
+                    appWrapper.classList.remove('justify-center');
+                    appWrapper.classList.add('pt-8', 'pb-8');
+                }
+
+                contentBox.classList.remove('animate-slide-up-fade');
+                requestAnimationFrame(() => {
+                    currentOption = button.dataset.option;
+                    currentStep = 0;
+                    initialMessage.classList.add('hidden');
+                    contentBox.classList.remove('hidden');
+                    contentBox.style.display = 'flex';
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    updateNavIndicator(button);
+                    contentBox.classList.add('animate-slide-up-fade');
+                    renderStep();
+                });
+            }
+        });
+        
+        navButtons.forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                if (!button.classList.contains('active')) {
+                    updateNavIndicator(button);
+                }
+            });
+        });
+
+        navContainer.addEventListener('mouseleave', () => {
+            const activeButton = navContainer.querySelector('.nav-btn.active');
+            updateNavIndicator(activeButton);
+        });
+
+        function performCopy(copyBtn) {
+            const data = contentData[currentOption];
+            if (!data) return;
+
+            const textToCopy = copyBtn.dataset.copyText;
+            const stepStatus = data.copiedStatus[currentStep];
+
+            const currentIndex = parseInt(copyBtn.dataset.lineIndex, 10);
+
+            if (isNaN(currentIndex) || !stepStatus || currentIndex >= stepStatus.length) {
+                console.error("Índice de linha inválido ou estado inconsistente.");
+                return;
+            }
+            
+            stepStatus[currentIndex].status = 1;
+
+            for (let i = 0; i < currentIndex; i++) {
+                if (stepStatus[i].status === 0) {
+                    stepStatus[i].status = 2; // Mark as skipped
+                }
+            }
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            
+            try {
+                document.execCommand('copy');
+                const originalIcon = copyBtn.innerHTML;
+                copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-green-400"><path d="M20 6 9 17l-5-5"/></svg>`;
+                copyBtn.disabled = true;
+
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalIcon;
+                    copyBtn.disabled = false;
+                }, 1500);
+
+            } catch (err) {
+                console.error('Falha ao copiar: ', err);
+            }
+
+            document.body.removeChild(tempInput);
+            updateCopyStatusStyles();
+        }
+
+        function handleGoToStep() {
+            const stepInput = document.getElementById('step-input');
+            const stepNumber = parseInt(stepInput.value, 10);
+            const totalSteps = contentData[currentOption].steps.length;
+
+            if (isNaN(stepNumber) || stepNumber < 1 || stepNumber > totalSteps) {
+                stepInput.classList.add('border-red-500');
+                setTimeout(() => stepInput.classList.remove('border-red-500'), 1000);
+            } else {
+                currentStep = stepNumber - 1;
+                renderStep();
+            }
+        }
+
+        boxContent.addEventListener('click', (event) => {
+            const prevBtn = event.target.closest('#prev-btn');
+            const nextBtn = event.target.closest('#next-btn');
+            const goBtn = event.target.closest('#go-btn');
+            const spoilerToggle = event.target.closest('.spoiler-toggle');
+            const lineElement = event.target.closest('.copyable-line');
+
+            if (prevBtn && !prevBtn.disabled) { handleNavigation(-1); }
+            if (nextBtn && !nextBtn.disabled) { handleNavigation(1); }
+            if (goBtn) { handleGoToStep(); }
+            
+            if (lineElement) {
+                const copyBtn = lineElement.querySelector('.copy-btn');
+                if (copyBtn && !copyBtn.disabled) {
+                    performCopy(copyBtn);
+                }
+            }
+            
+            if (spoilerToggle) {
+                const targetId = spoilerToggle.dataset.spoilerTargetId;
+                const spoilerContent = document.getElementById(targetId);
+                
+                if (spoilerContent) {
+                    spoilerContent.classList.toggle('hidden');
+                    spoilerToggle.classList.toggle('collapsed');
+                }
+            }
+        });
+
+        boxContent.addEventListener('keyup', (event) => {
+            if (event.target.id === 'step-input' && event.key === 'Enter') {
+                handleGoToStep();
+            }
+        });
+
+        closeBtn.addEventListener('click', () => {
+            isInitialLayout = true;
+            appWrapper.classList.add('justify-center');
+            appWrapper.classList.remove('pt-8', 'pb-8');
+
+            contentBox.classList.add('hidden');
+            contentBox.style.display = 'none';
+            initialMessage.classList.remove('hidden');
+            
+            currentOption = null;
+            currentStep = 0;
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            updateNavIndicator(null);
+            contentBox.classList.remove('animate-slide-up-fade');
+        });
+
+        function initializeUser() {
+            const savedNickname = localStorage.getItem('userNickname');
+            if (savedNickname) {
+                userNickname = savedNickname;
+            } else {
+                nicknameModal.classList.remove('hidden');
+                nicknameModal.querySelector('.glass-card').classList.add('animate-scale-up');
+            }
+        }
+
+        saveNicknameBtn.addEventListener('click', () => {
+            const nickname = nicknameInput.value.trim();
+            if (nickname) {
+                userNickname = nickname;
+                localStorage.setItem('userNickname', nickname);
+                nicknameModal.style.opacity = '0';
+                setTimeout(() => {
+                    nicknameModal.classList.add('hidden');
+                }, 300);
+            } else {
+                nicknameInput.classList.add('border-red-500');
+                setTimeout(() => nicknameInput.classList.remove('border-red-500'), 2000);
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeUser();
+            setTimeout(() => {
+                document.querySelector('main').classList.remove('opacity-0');
+                document.querySelector('footer').classList.remove('opacity-0');
+            }, 100);
+        });
+
+        // --- Bloqueio da inspeção de elementos e atalhos ---
+        (function() {
+            // Desabilita o menu de contexto (clique direito)
+            document.addEventListener('contextmenu', e => e.preventDefault());
+
+            // Bloqueia atalhos de teclado comuns
+            document.addEventListener('keydown', e => {
+                if (
+                    // F12
+                    e.key === 'F12' ||
+                    // Ctrl+Shift+I (ou Cmd+Opt+I para Mac)
+                    (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                    // Ctrl+Shift+J (ou Cmd+Opt+J para Mac)
+                    (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+                    // Ctrl+U (ou Cmd+U para Mac) - visualizar código fonte
+                    (e.ctrlKey && e.key === 'u')
+                ) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // Adiciona uma verificação contínua para a abertura do DevTools
+            const checkDevTools = () => {
+                const threshold = 160;
+                const devtools = /./;
+                devtools.toString = () => {
+                    if (window.performance.now() > threshold) {
+                        window.location.href = allowedReferrer;
+                    }
+                };
+                console.log(devtools);
+            };
+            setInterval(checkDevTools, 1000);
+        })();
+        // --- Fim do código de bloqueio ---
+    </script>
+</body>
+</html>
